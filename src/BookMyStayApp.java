@@ -1,26 +1,19 @@
-HashMap<String,Integer> inventory = new HashMap<>();
+static Stack<String> cancelledRooms = new Stack<>();
 
-inventory.put("Standard",2);
-inventory.put("Deluxe",1);
-inventory.put("Suite",0);
+static void cancelBooking(String guestName,
+                          HashMap<String,String> reservations,
+                          HashMap<String,Integer> inventory) {
 
-Scanner sc = new Scanner(System.in);
+    if(!reservations.containsKey(guestName)){
+        System.out.println("Reservation not found");
+        return;
+    }
 
-System.out.println("Enter Name:");
-String name = sc.nextLine();
+    String roomID = reservations.get(guestName);
 
-System.out.println("Enter Room Type:");
-String roomType = sc.nextLine();
+    cancelledRooms.push(roomID);
 
-try {
+    reservations.remove(guestName);
 
-    validateBooking(roomType, inventory);
-
-    System.out.println("Booking request accepted");
-
-}
-catch(InvalidBookingException e){
-
-    System.out.println("Error: " + e.getMessage());
-
+    System.out.println("Booking cancelled successfully");
 }
