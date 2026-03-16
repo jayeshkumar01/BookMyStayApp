@@ -7,6 +7,9 @@ public class BookMyStayApp {
     static HashMap<String, Integer> bookings = new HashMap<>();
     static ArrayList<String> bookingHistory = new ArrayList<>();
 
+    // UC4 Stack for Undo Cancel
+    static Stack<String> cancelStack = new Stack<>();
+
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
@@ -26,7 +29,8 @@ public class BookMyStayApp {
             System.out.println("6. View Booking History");
             System.out.println("7. Check-In");
             System.out.println("8. Check-Out");
-            System.out.println("9. Exit");
+            System.out.println("9. Undo Last Cancellation");
+            System.out.println("10. Exit");
 
             int choice = sc.nextInt();
             sc.nextLine();
@@ -77,6 +81,10 @@ public class BookMyStayApp {
                     break;
 
                 case 9:
+                    undoCancel();
+                    break;
+
+                case 10:
                     System.out.println("Thank you for using BookMyStay!");
                     return;
 
@@ -87,8 +95,6 @@ public class BookMyStayApp {
     }
 
     static void viewRooms(){
-
-        System.out.println("\nRoom Status");
 
         for(int room : rooms.keySet()){
 
@@ -113,7 +119,6 @@ public class BookMyStayApp {
             if(!rooms.get(room)){
                 rooms.put(room,true);
                 bookings.put(customer,room);
-
                 bookingHistory.add(customer+" booked room "+room);
 
                 System.out.println("Room "+room+" booked for "+customer);
@@ -133,13 +138,27 @@ public class BookMyStayApp {
             rooms.put(room,false);
             bookings.remove(name);
 
-            bookingHistory.add(name+" cancelled booking for room "+room);
+            cancelStack.push(name); // push into stack
+            bookingHistory.add(name+" cancelled booking");
 
             System.out.println("Booking cancelled.");
         }
         else{
             System.out.println("Booking not found.");
         }
+    }
+
+    static void undoCancel(){
+
+        if(cancelStack.isEmpty()){
+            System.out.println("No cancellation to undo.");
+            return;
+        }
+
+        String customer = cancelStack.pop();
+        bookingQueue.add(customer);
+
+        System.out.println("Cancellation undone. Booking request restored for "+customer);
     }
 
     static void searchBooking(String name){
@@ -152,8 +171,6 @@ public class BookMyStayApp {
 
     static void viewHistory(){
 
-        System.out.println("\nBooking History");
-
         for(String record : bookingHistory){
             System.out.println(record);
         }
@@ -161,12 +178,10 @@ public class BookMyStayApp {
 
     static void checkIn(String name){
 
-        if(bookings.containsKey(name)){
+        if(bookings.containsKey(name))
             System.out.println(name+" checked into room "+bookings.get(name));
-        }
-        else{
-            System.out.println("No booking found for "+name);
-        }
+        else
+            System.out.println("No booking found.");
     }
 
     static void checkOut(String name){
@@ -178,9 +193,9 @@ public class BookMyStayApp {
             rooms.put(room,false);
             bookings.remove(name);
 
-            bookingHistory.add(name+" checked out from room "+room);
+            bookingHistory.add(name+" checked out");
 
-            System.out.println("Checkout successful. Room "+room+" is now available.");
+            System.out.println("Checkout successful.");
         }
         else{
             System.out.println("Customer not found.");
