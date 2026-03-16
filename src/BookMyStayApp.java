@@ -1,19 +1,27 @@
-static Stack<String> cancelledRooms = new Stack<>();
+import java.util.HashMap;
+import java.util.Stack;
 
-static void cancelBooking(String guestName,
-                          HashMap<String,String> reservations,
-                          HashMap<String,Integer> inventory) {
+static HashMap<String, Boolean> paymentStatus = new HashMap<>();
+static void processPayment(String guestName, HashMap<String,String> reservations){
 
     if(!reservations.containsKey(guestName)){
-        System.out.println("Reservation not found");
+        System.out.println("Reservation not found for " + guestName);
         return;
     }
 
-    String roomID = reservations.get(guestName);
+    if(paymentStatus.containsKey(guestName)){
+        System.out.println("Payment already completed for " + guestName);
+        return;
+    }
 
-    cancelledRooms.push(roomID);
+    paymentStatus.put(guestName, true);
 
-    reservations.remove(guestName);
+    System.out.println("Payment successful for " + guestName);
+}System.out.println("7 Make Payment");case 7:
 
-    System.out.println("Booking cancelled successfully");
-}
+System.out.println("Enter Guest Name:");
+String payName = sc.nextLine();
+
+processPayment(payName, reservations);
+
+break;
