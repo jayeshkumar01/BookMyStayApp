@@ -2,20 +2,16 @@ import java.util.*;
 
 public class BookMyStayApp {
 
-    // Room storage using HashMap
     static HashMap<Integer, Boolean> rooms = new HashMap<>();
-
-    // Booking queue using FIFO
     static Queue<String> bookingQueue = new LinkedList<>();
-
-    // Booking records
     static HashMap<String, Integer> bookings = new HashMap<>();
+    static ArrayList<String> bookingHistory = new ArrayList<>();
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
-        // Initialize 5 rooms
+        // initialize rooms
         for(int i=1;i<=5;i++){
             rooms.put(i,false);
         }
@@ -27,7 +23,9 @@ public class BookMyStayApp {
             System.out.println("2. Request Booking");
             System.out.println("3. Process Booking");
             System.out.println("4. Cancel Booking");
-            System.out.println("5. Exit");
+            System.out.println("5. Search Booking");
+            System.out.println("6. View Booking History");
+            System.out.println("7. Exit");
 
             int choice = sc.nextInt();
             sc.nextLine();
@@ -56,6 +54,16 @@ public class BookMyStayApp {
                     break;
 
                 case 5:
+                    System.out.print("Enter Customer Name: ");
+                    String search = sc.nextLine();
+                    searchBooking(search);
+                    break;
+
+                case 6:
+                    viewHistory();
+                    break;
+
+                case 7:
                     System.out.println("Thank you for using BookMyStay!");
                     return;
 
@@ -65,13 +73,9 @@ public class BookMyStayApp {
         }
     }
 
-    // View available rooms
     static void viewRooms(){
-
         System.out.println("\nRoom Status");
-
         for(int room : rooms.keySet()){
-
             if(rooms.get(room))
                 System.out.println("Room "+room+" : Booked");
             else
@@ -79,7 +83,6 @@ public class BookMyStayApp {
         }
     }
 
-    // Process booking using FIFO queue
     static void processBooking(){
 
         if(bookingQueue.isEmpty()){
@@ -95,15 +98,16 @@ public class BookMyStayApp {
                 rooms.put(room,true);
                 bookings.put(customer,room);
 
+                bookingHistory.add(customer + " booked room " + room);
+
                 System.out.println("Room "+room+" booked for "+customer);
                 return;
             }
         }
 
-        System.out.println("No rooms available for "+customer);
+        System.out.println("No rooms available.");
     }
 
-    // Cancel booking
     static void cancelBooking(String name){
 
         if(bookings.containsKey(name)){
@@ -113,10 +117,34 @@ public class BookMyStayApp {
             rooms.put(room,false);
             bookings.remove(name);
 
-            System.out.println("Booking cancelled for "+name);
+            bookingHistory.add(name + " cancelled room " + room);
+
+            System.out.println("Booking cancelled.");
         }
         else{
             System.out.println("Booking not found.");
+        }
+    }
+
+    static void searchBooking(String name){
+
+        if(bookings.containsKey(name))
+            System.out.println(name + " has booked room " + bookings.get(name));
+        else
+            System.out.println("No booking found for "+name);
+    }
+
+    static void viewHistory(){
+
+        if(bookingHistory.isEmpty()){
+            System.out.println("No history available.");
+            return;
+        }
+
+        System.out.println("\nBooking History");
+
+        for(String record : bookingHistory){
+            System.out.println(record);
         }
     }
 }
