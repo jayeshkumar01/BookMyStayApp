@@ -1,19 +1,28 @@
 // Payment
 static void processPayment(String name){
+
     if(!reservations.containsKey(name)){
         System.out.println("Reservation not found");
         return;
     }
+
+    if(paymentStatus.containsKey(name)){
+        System.out.println("Payment already done");
+        return;
+    }
+
     paymentStatus.put(name,true);
     System.out.println("Payment successful");
 }
 
 // Check-in
 static void checkInGuest(String name){
+
     if(!paymentStatus.containsKey(name)){
         System.out.println("Payment required");
         return;
     }
+
     checkinStatus.put(name,true);
     System.out.println("Check-in successful");
 }
